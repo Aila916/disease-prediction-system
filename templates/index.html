@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Disease Prediction System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+        }
+
+        form {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            max-width: 800px;
+            margin: auto;
+        }
+
+        .symptom-box {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .symptom-item {
+            background: #ecf0f1;
+            padding: 8px;
+            border-radius: 5px;
+        }
+
+        button {
+            margin-top: 20px;
+            width: 100%;
+            padding: 12px;
+            background: #3498db;
+            color: white;
+            font-size: 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #2980b9;
+        }
+
+        .error {
+            color: red;
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .result {
+            background: #dff9fb;
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Disease Prediction System</h1>
+
+<form method="POST" action="/predict">
+
+    <h3>Select Symptoms</h3>
+
+    {% if symptoms and symptoms|length > 0 %}
+        <div class="symptom-box">
+            {% for s in symptoms %}
+                <label class="symptom-item">
+                    <input type="checkbox" name="symptoms" value="{{ s.symptom_id }}">
+                    {{ s.symptom_name }}
+                </label>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p><strong>No symptoms found in the database.</strong></p>
+    {% endif %}
+
+    {% if error %}
+        <p class="error">{{ error }}</p>
+    {% endif %}
+
+    <button type="submit">Predict Disease</button>
+</form>
+
+{% if results %}
+    <div style="max-width:800px;margin:auto;">
+        <h2>Prediction Results</h2>
+
+        {% for r in results %}
+            <div class="result">
+                <h3>{{ r.disease_name }}</h3>
+                <p>{{ r.description }}</p>
+                <strong>Match: {{ "%.2f"|format(r.match_percentage) }}%</strong>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+
+</body>
+</html>
